@@ -15,36 +15,37 @@ class Proxy(object):
     }
 
     # 提取网页内代理的正则表达式
-    proxyPattern01 = "<td[^>]*>((\d+)\.(\d+).(\d+).(\d+))</td>[\w\W]*?<td[^>]*>(\d+)</td>"
-    proxyPattern02 = "<td>((\d+)\.(\d+).(\d+).(\d+)):(\d+)</td>"
+    proxyPattern01 = "<td[^>]*>((\d+)\.(\d+).(\d+).(\d+))</td>[\w\W]*?<td[^>]*>(\d+)</td>[\w\W]*?<td[^>]*>(HTTPS?)</td>"
+    proxyPattern02 = "<td>((\d+)\.(\d+).(\d+).(\d+)):(\d+)</td>[\w\W]*?<td>(HTTPS?).*?</td>"
     proxyUrls = ['https://www.xicidaili.com/nn',
-                 'https://www.xicidaili.com/nt',
-                 'https://www.xicidaili.com/wn',
-                 'https://www.xicidaili.com/wt',
-                 'https://proxy.mimvp.com/freeopen.php',
-                 'http://www.nimadaili.com/https/',
-                 'https://www.kuaidaili.com/free/intr/',
-                 'http://www.nimadaili.com/http/',
-                 'http://www.xiladaili.com/http/',
-                 'http://www.superfastip.com/welcome/freeIP',
-                 'http://www.xiladaili.com/gaoni/',
-                 'http://www.qydaili.com/free/',
-                 'https://www.kuaidaili.com/free/inha/',
-                 'http://www.nimadaili.com/gaoni/',
-                 'http://www.kxdaili.com/dailiip.html',
-                 'https://www.kuaidaili.com/ops/',
-                 'https://lab.crossincode.com/proxy/',
-                 'http://www.xiladaili.com/putong/',
-                 'http://www.xiladaili.com/https/',
-                 'https://proxy.seofangfa.com/']
+                 # 'https://www.xicidaili.com/nt',
+                 # 'https://www.xicidaili.com/wn',
+                 # 'https://www.xicidaili.com/wt',
+                 # 'https://proxy.mimvp.com/freeopen.php',
+                 # 'http://www.nimadaili.com/https/',
+                 # 'https://www.kuaidaili.com/free/intr/',
+                 # 'http://www.nimadaili.com/http/',
+                 # 'http://www.xiladaili.com/http/',
+                 # 'http://www.superfastip.com/welcome/freeIP',
+                 # 'http://www.xiladaili.com/gaoni/',
+                 # 'http://www.qydaili.com/free/',
+                 # 'https://www.kuaidaili.com/free/inha/',
+                 # 'http://www.nimadaili.com/gaoni/',
+                 # 'http://www.kxdaili.com/dailiip.html',
+                 # 'https://www.kuaidaili.com/ops/',
+                 # 'http://www.xiladaili.com/putong/',
+                 'http://www.xiladaili.com/https/']
+    # 验证代理有效性，此网页返回请求ip
+    validProxyUrl = 'http://icanhazip.com/'
 
     def __init__(self):
+        proxys = list()
         pass
 
     # 采集代理服务器配置，并验证各个服务器是否好使
     def init_proxy(self):
         self.crawler_proxy()
-        self.valid_proxy()
+        self.valid_proxys()
 
     # 采集服务器
     def crawler_proxy(self):
@@ -56,6 +57,8 @@ class Proxy(object):
         pool.close()
         pool.join()
         results = [y for x in results for y in x]
+        results = self.unique(results)
+        self.proxys = results
         return results
 
     # 网页采集的[(ip,port),,,]列表信息
@@ -75,13 +78,34 @@ class Proxy(object):
         except Exception as e:
             print(e.args)
         print('url:' + url + str(group))
-        return [(x[0], x[-1]) for x in group]
+        return [(x[-1], x[0], x[-2]) for x in group]
+
+    # 去重
+    def unique(self, proxyUrlList):
+        # TODO
+        return proxyUrlList
 
     # 验证服务器
-    def valid_proxy(self):
-        pass
+    def valid_proxys(self):
+        results = filter(self.valid_proxy, self.proxys)
+        self.proxys = [i for i in results]
+        return results
+
+    # 验证服务器
+    def valid_proxy(self, proxy):
+        try:
+            res1 = requests.get(self.validProxyUrl, proxies={proxy[0].lower() + "://": proxy[1] + ":" + proxy[2]},
+                                timeout=6)
+            if res1.ok and res1.content == proxy[1]:
+                return True
+        except Exception as e:
+            print(e.args)
+        return False
 
 
 proxy = Proxy()
 # proxy.get_page_proxy('https://www.kuaidaili.com/free/intr/')
-proxy.crawler_proxy()
+# proxy.crawler_proxy()
+# proxy.valid_proxy(('HTTP', '124.205.155.153', '124'))
+proxy.init_proxy()
+print(proxy.proxys)
