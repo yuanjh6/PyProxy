@@ -16,11 +16,27 @@ class Proxy(object):
 
     # 提取网页内代理的正则表达式
     proxyPattern01 = "<td[^>]*>((\d+)\.(\d+).(\d+).(\d+))</td>[\w\W]*?<td[^>]*>(\d+)</td>"
+    proxyPattern02 = "<td>((\d+)\.(\d+).(\d+).(\d+)):(\d+)</td>"
     proxyUrls = ['https://www.xicidaili.com/nn',
                  'https://www.xicidaili.com/nt',
                  'https://www.xicidaili.com/wn',
                  'https://www.xicidaili.com/wt',
-                 'http://www.xiladaili.com/gaoni/']
+                 'https://proxy.mimvp.com/freeopen.php',
+                 'http://www.nimadaili.com/https/',
+                 'https://www.kuaidaili.com/free/intr/',
+                 'http://www.nimadaili.com/http/',
+                 'http://www.xiladaili.com/http/',
+                 'http://www.superfastip.com/welcome/freeIP',
+                 'http://www.xiladaili.com/gaoni/',
+                 'http://www.qydaili.com/free/',
+                 'https://www.kuaidaili.com/free/inha/',
+                 'http://www.nimadaili.com/gaoni/',
+                 'http://www.kxdaili.com/dailiip.html',
+                 'https://www.kuaidaili.com/ops/',
+                 'https://lab.crossincode.com/proxy/',
+                 'http://www.xiladaili.com/putong/',
+                 'http://www.xiladaili.com/https/',
+                 'https://proxy.seofangfa.com/']
 
     def __init__(self):
         pass
