@@ -4,7 +4,7 @@
 2,集成到程序中使用，典型用途，爬虫，下载采集新闻，视频等  
 
 ## 使用方法
-1，打印当前可以使用的代理  
+1，个人独立使用，打印可用代理  
 ```
 proxy = Proxy()
 proxy.init_proxy()
@@ -15,7 +15,7 @@ print(proxy.proxyUrls)
 ```
 proxy = Proxy()
 proxy.init_proxy()  # 抓取代理服务器，验证各代理服务器
-print(proxy.proxyUrls)  # 打印输出当前获取的有效服务器
+# print(proxy.proxyUrls)  # 打印输出当前获取的有效服务器
 proxy.get_proxy()  # 循环获取代理，避免只使用一个
 proxy.random_proxy()  # 随机获取代理，避免只使用一个
 proxy.bad_proxy('http://1.1.1.1:8080')  # 标记失效代理，从代理列表中移除
