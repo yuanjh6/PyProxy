@@ -16,29 +16,29 @@ class Proxy(object):
     # 提取网页内代理的正则表达式
     proxyPattern01 = "<td[^>]*>((\d+)\.(\d+).(\d+).(\d+))</td>[\w\W]*?<td[^>]*>(\d+)</td>[\w\W]*?<td[^>]*>(HTTPS?)</td>"
     proxyPattern02 = "<td>((\d+)\.(\d+).(\d+).(\d+)):(\d+)</td>[\w\W]*?<td>(HTTPS?).*?</td>"
-    proxyUrls = ['https://www.xicidaili.com/nn',
-                 'https://www.xicidaili.com/nt',
-                 'https://www.xicidaili.com/wn',
-                 'https://www.xicidaili.com/wt',
-                 'https://proxy.mimvp.com/freeopen.php',
-                 'http://www.nimadaili.com/https/',
-                 'https://www.kuaidaili.com/free/intr/',
-                 'http://www.nimadaili.com/http/',
-                 'http://www.xiladaili.com/http/',
-                 'http://www.superfastip.com/welcome/freeIP',
-                 'http://www.xiladaili.com/gaoni/',
-                 'http://www.qydaili.com/free/',
-                 'https://www.kuaidaili.com/free/inha/',
-                 'http://www.nimadaili.com/gaoni/',
-                 'http://www.kxdaili.com/dailiip.html',
-                 'https://www.kuaidaili.com/ops/',
-                 'http://www.xiladaili.com/putong/',
-                 'http://www.xiladaili.com/https/']
+    proxySeedUrls = ['https://www.xicidaili.com/nn',
+                     'https://www.xicidaili.com/nt',
+                     'https://www.xicidaili.com/wn',
+                     'https://www.xicidaili.com/wt',
+                     'https://proxy.mimvp.com/freeopen.php',
+                     'http://www.nimadaili.com/https/',
+                     'https://www.kuaidaili.com/free/intr/',
+                     'http://www.nimadaili.com/http/',
+                     'http://www.xiladaili.com/http/',
+                     'http://www.superfastip.com/welcome/freeIP',
+                     'http://www.xiladaili.com/gaoni/',
+                     'http://www.qydaili.com/free/',
+                     'https://www.kuaidaili.com/free/inha/',
+                     'http://www.nimadaili.com/gaoni/',
+                     'http://www.kxdaili.com/dailiip.html',
+                     'https://www.kuaidaili.com/ops/',
+                     'http://www.xiladaili.com/putong/',
+                     'http://www.xiladaili.com/https/']
     # 验证代理有效性，此网页返回请求ip
     validProxyUrl = 'http://icanhazip.com/'
 
     def __init__(self):
-        proxys = list()
+        self.proxyUrls = list()
         # 当前使用代理id，使用一个+1，滚动使用
         self.proxy_id = 0
 
@@ -50,9 +50,9 @@ class Proxy(object):
     # 采集服务器
     def crawler_proxy(self):
         # 创建一个工作者进程池
-        pool = Pool(min(1, cpu_count() - 1))
+        pool = Pool(max(1, cpu_count() - 1))
         # 在各个进程中打开url，并返回结果
-        results = pool.map(self.get_page_proxy, self.proxyUrls)
+        results = pool.map(self.get_page_proxy, self.proxySeedUrls)
         # 关闭进程池，等待工作结束
         pool.close()
         pool.join()
@@ -85,7 +85,7 @@ class Proxy(object):
 
     # 验证服务器
     def valid_proxys(self):
-        pool = Pool(min(1, cpu_count() - 1))
+        pool = Pool(max(1, cpu_count() - 1))
         # 在各个进程中打开url，并返回结果
 
         results = pool.map(self.good_proxy, self.proxyUrls)
@@ -103,13 +103,13 @@ class Proxy(object):
             res1 = requests.get(self.validProxyUrl, proxies={
                 protocol: proxyUrl}, timeout=6, headers=self.headers)
             if res1.ok:
-                return proxy
+                return proxyUrl
         except Exception as e:
             print(e.args)
         return None
 
     def bad_proxy(self, proxyUrl):
-        if self.proxyUrls.contains(proxyUrl):
+        if proxyUrl in self.proxyUrls:
             self.proxyUrls.remove(proxyUrl)
 
     def get_proxy(self):
