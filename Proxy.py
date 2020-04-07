@@ -40,17 +40,9 @@ class Proxy(object):
 
     def __init__(self):
         proxys = list()
-        self.localIp = ''
 
     # 采集代理服务器配置，并验证各个服务器是否好使
     def init_proxy(self):
-        try:
-            res1 = requests.get(self.validProxyUrl, timeout=6, headers=self.headers)
-            if res1.ok:
-                self.localIp = res1.text
-        except Exception as e:
-            print(e.args)
-
         self.crawler_proxy()
         self.valid_proxys()
 
@@ -113,9 +105,7 @@ class Proxy(object):
                 proxy[0].lower(): proxy[0].lower() + "://" + proxy[1] + ":" + proxy[2]},
                                 timeout=6, headers=self.headers)
             print(res1.text)
-            if res1.ok and (
-                    res1.text.find(proxy[1]) > -1 or self.localIp != res1.text):
-                print('good proxy:' + str(proxy))
+            if res1.ok:
                 return proxy
         except Exception as e:
             print(e.args)
